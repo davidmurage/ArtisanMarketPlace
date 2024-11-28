@@ -374,14 +374,12 @@ img {
   background-image: url("{% static 'images/ecom-banner1.jpg' %}");
 }
 .slide-2 {
-  background-image: url("{% static 'images/ecom-banner4.jpg' %}");
+  background-image: url("{% static 'images/ecom-banner2.jpg' %}");
 }
 .slide-3 {
-  background-image: url("{% static 'images/ecom-banner1.png' %}");
-}
-.slide-4 {
   background-image: url("{% static 'images/ecom-banner3.jpg' %}");
 }
+
   </style>
 
 <div class="row">
@@ -391,7 +389,6 @@ img {
         <label for="slide-dot-1"></label>
         <label for="slide-dot-2"></label>
         <label for="slide-dot-3"></label>
-        <label for="slide-dot-4"></label>
       </div>
       
       <input id="slide-dot-1" type="radio" name="slides" checked>
@@ -402,8 +399,6 @@ img {
       
       <input id="slide-dot-3" type="radio" name="slides">
         <div class="slide slide-3"></div>
-      <input id="slide-dot-4" type="radio" name="slides">
-        <div class="slide slide-4"></div>
     </div>
   </div>
 </div>
@@ -440,7 +435,7 @@ img {
                 </div>
 
                 <a class="cart" href="{% url 'add-to-cart' p.id  %}">
-                  <span class="price">${{p.price}}</span>
+                  <span class="price">KSH {{p.price}}</span>
                   <span class="add-to-cart">
                     <span class="txt"><i class="fa fa-shopping-cart"></i> Add To Cart</span>
                   </span>
