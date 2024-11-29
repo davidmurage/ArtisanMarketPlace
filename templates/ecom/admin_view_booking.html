@@ -2,23 +2,52 @@
 {% load static %}
 {% block content %}
 
-
 <head>
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-  <style media="screen">
+  <style>
     a:link {
       text-decoration: none;
     }
 
     h6 {
       text-align: center;
+      font-size: 18px;
+      font-weight: bold;
     }
 
-    .row {
-      margin: 100px;
+    .panel {
+      margin-top: 50px;
+    }
+
+    .table-responsive {
+      margin: 20px 0;
+    }
+
+    .table th, .table td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .btn-xs {
+      margin: 0 5px;
+    }
+
+    img {
+      border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+      h6 {
+        font-size: 16px;
+      }
+
+      .btn-xs {
+        margin: 2px 2px;
+        padding: 5px 10px;
+      }
     }
   </style>
 </head>
@@ -28,41 +57,49 @@
     <div class="panel-heading">
       <h6 class="panel-title">Total Orders</h6>
     </div>
-    <table class="table table-hover table-bordered" id="dev-table">
-      <thead>
-        <tr>
-          <th>Customer</th>
-          <th>Contact</th>
-          <th>Shipping Address</th>
-          <th>Product</th>
-          <th>Image</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <!-- p for product, c for customer-->
-      {% for product,customer,order in data %}
-      <tr>
-        {% for c in customer %}
-        <td> {{c.get_name}}</td>
-        <td>{{c.mobile}}</td>
-        <td>{{order.address}}</td>
-
-        {% endfor %}
-        {% for p in product %}
-        <td> {{p.name}}</td>
-        <td> <img src="{{p.product_image.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{order.status}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-order' order.id  %}"><span class="glyphicon glyphicon-edit"></span></a>
-        <a class="btn btn-danger btn-xs" href="{% url 'delete-order' order.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-
-        {% endfor %}
-
-
-
-      </tr>
-      {% endfor %}
-    </table>
+    <!-- Responsive Table Wrapper -->
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered" id="dev-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Shipping Address</th>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Iterate over data -->
+          {% for product, customer, order in data %}
+          <tr>
+            {% for c in customer %}
+            <td>{{ c.get_name }}</td>
+            <td>{{ c.mobile }}</td>
+            <td>{{ order.address }}</td>
+            {% endfor %}
+            {% for p in product %}
+            <td>{{ p.name }}</td>
+            <td>
+              <img src="{{ p.product_image.url }}" alt="{{ p.name }}" height="40px" width="40px" />
+            </td>
+            <td>{{ order.status }}</td>
+            <td>
+              <a class="btn btn-primary btn-xs" href="{% url 'update-order' order.id %}" aria-label="Edit Order">
+                <span class="glyphicon glyphicon-edit"></span>
+              </a>
+              <a class="btn btn-danger btn-xs" href="{% url 'delete-order' order.id %}" aria-label="Delete Order">
+                <span class="glyphicon glyphicon-trash"></span>
+              </a>
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
