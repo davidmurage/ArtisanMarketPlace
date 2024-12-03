@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, reverse
+from dotenv import load_dotenv
+
 from . import forms, models
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.mail import send_mail
@@ -11,6 +13,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from datetime import datetime
 import base64
+import os
 
 
 def home_view(request):
@@ -446,13 +449,15 @@ def payment_success_view(request):
     response.delete_cookie('address')
     return response
 
+#Load environment variables from .env  file
+load_dotenv()
 
 # Replace with your credentials
-CONSUMER_KEY = 'wPQa8vrbr2hA6uPN8mjVYKh65rLh6bf0fHMwt5aJAHTXeY54'
-CONSUMER_SECRET = 'ATbfVYAgpervDtijTeklNGS9QORAOw8w1AvSA8dGPC2JdVNri1Uyub8rshDaV7D7'
-BUSINESS_SHORTCODE = '174379'
-PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-CALLBACK_URL = 'https://your_domain.com/payment-success'
+CONSUMER_KEY = os.getenv('CONSUMER_KEY')
+CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
+BUSINESS_SHORTCODE = os.getenv('BUSINESS_SHORTCODE')
+PASSKEY = os.getenv('PASSKEY')
+CALLBACK_URL = os.getenv('CALLBACK_URL')
 
 def get_mpesa_access_token():
     url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"

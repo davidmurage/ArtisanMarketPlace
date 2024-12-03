@@ -44,7 +44,7 @@
 
         const data = await response.json();
         if (data.ResponseCode === "0") {
-            alert("Payment request sent to your phone. Complete it to finalize booking.");
+            alert("Payment request sent to your phone. Complete it to finalize Order.");
         } else {
             alert("Payment failed: " + data.errorMessage);
         }
