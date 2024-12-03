@@ -6,6 +6,11 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.conf import settings
+import requests
+from django.http import JsonResponse
+from django.shortcuts import render
+from datetime import datetime
+import base64
 
 
 def home_view(request):
@@ -440,6 +445,53 @@ def payment_success_view(request):
     response.delete_cookie('mobile')
     response.delete_cookie('address')
     return response
+
+
+# Replace with your credentials
+CONSUMER_KEY = 'wPQa8vrbr2hA6uPN8mjVYKh65rLh6bf0fHMwt5aJAHTXeY54'
+CONSUMER_SECRET = 'ATbfVYAgpervDtijTeklNGS9QORAOw8w1AvSA8dGPC2JdVNri1Uyub8rshDaV7D7'
+BUSINESS_SHORTCODE = '174379'
+PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+CALLBACK_URL = 'https://your_domain.com/payment-success'
+
+def get_mpesa_access_token():
+    url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
+    response = requests.get(url, auth=(CONSUMER_KEY, CONSUMER_SECRET))
+    return response.json().get("access_token")
+
+def initiate_payment(request):
+    if request.method == "POST":
+        phone_number = request.POST.get("phone_number")
+        amount = request.POST.get("amount")
+        access_token = get_mpesa_access_token()
+
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        password = base64.b64encode((BUSINESS_SHORTCODE + PASSKEY + timestamp).encode()).decode()
+
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+
+        request = {
+            "BusinessShortCode": BUSINESS_SHORTCODE,
+            "Password": password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
+            "Amount": amount,
+            "PartyA": phone_number,
+            "PartyB": BUSINESS_SHORTCODE,
+            "PhoneNumber": phone_number,
+            "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+            "AccountReference": "ArtisanMarket",
+            "TransactionDesc": "Payment for booking"
+        }
+
+        url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+        response = requests.post(url, json=request, headers=headers)
+
+        return JsonResponse(response.json())
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 @login_required(login_url='customerlogin')
