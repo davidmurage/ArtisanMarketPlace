@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-t78dz$=zix#z8yve#wb!xu@ikep@#)o&5bp1hrtqz=g+=5($$7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://artisanmarketplace.onrender.com/']
+ALLOWED_HOSTS = ['https://artisanmarketplace.onrender.com/', '127.0.0.1']
 
 
 # Application definition
