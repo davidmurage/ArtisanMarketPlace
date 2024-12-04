@@ -2,7 +2,12 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView,LogoutView
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to the Artisan MarketPlace")
 urlpatterns = [
+    path('',home),
 
     path('',views.home_view,name=''),
 
