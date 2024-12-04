@@ -26,7 +26,7 @@ MEDIA_ROOT = BASE_DIR/ 'media' # Directory where uploaded files are stored
 SECRET_KEY = 'django-insecure-t78dz$=zix#z8yve#wb!xu@ikep@#)o&5bp1hrtqz=g+=5($$7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
