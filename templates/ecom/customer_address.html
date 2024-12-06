@@ -89,7 +89,7 @@ select{
 }
 </style>
 {%if product_in_cart%}
-<form method="post">
+<form method="post" action="{% url 'payment_selection' %}">
   {% csrf_token %}
 <ul class="form-style-1">
     <li>

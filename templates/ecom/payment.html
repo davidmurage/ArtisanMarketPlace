@@ -15,6 +15,7 @@
                 <div class="panel-body">
                     <form method="POST" id="mpesaForm" action="{% url 'initiate_payment' %}">
                         {% csrf_token %}
+                         <input type="hidden" name="art_id" value="{{ art.id }}" />
                         <div class="form-group">
                             <label for="phone_number">Phone Number</label>
                             <input type="text" class="form-control" id="phone_number" name="phone_number"

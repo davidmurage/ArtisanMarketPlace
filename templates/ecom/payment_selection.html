@@ -1,0 +1,16 @@
+{% extends 'ecom/customer_base.html' %}
+{% load static %}
+
+{% block content %}
+<h2 style="text-align:center;">Select Payment Method</h2>
+<div style="text-align:center; margin-top:20px;">
+    <form method="post" action="{% url 'initiate_payment' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Pay with MPesa</button>
+    </form>
+    <form method="post" action="{% url 'customer-address' %}" style="margin-top:10px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Pay with Card</button>
+    </form>
+</div>
+{% endblock %}

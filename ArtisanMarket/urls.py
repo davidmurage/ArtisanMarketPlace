@@ -50,7 +50,10 @@ urlpatterns = [
     path('cart', views.cart_view,name='cart'),
     path('remove-from-cart/<int:pk>', views.remove_from_cart_view,name='remove-from-cart'),
     path('customer-address', views.customer_address_view,name='customer-address'),
+
+    path('payment-selection/', views.payment_selection, name='payment_selection'),
     path('initiate-payment/', views.initiate_payment, name='initiate_payment'),
+
     path('payment-success', views.payment_success_view,name='payment-success'),
 
 

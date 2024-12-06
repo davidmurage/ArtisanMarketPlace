@@ -404,6 +404,22 @@ def customer_address_view(request):
                   {'addressForm': addressForm, 'product_in_cart': product_in_cart,
                    'product_count_in_cart': product_count_in_cart})
 
+#To select the mode of payment you want to use
+def payment_selection(request):
+    if request.method == "POST":
+        email = request.POST.get('Email')
+        mobile = request.POST.get('Mobile')
+        address = request.POST.get('Address')
+
+        # Save the data to the session (or database) for use in the payment process
+        request.session['email'] = email
+        request.session['mobile'] = mobile
+        request.session['address'] = address
+
+        return render(request, 'ecom/payment_selection.html')
+
+    return render(request, 'ecom/error.html', {"message": "Invalid Request"})
+
 
 # here we are just directing to this view...actually we have to check whther payment is successful or not
 # then only this view should be accessed
@@ -497,6 +513,8 @@ def initiate_payment(request):
         return JsonResponse(response.json())
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
 
 
 @login_required(login_url='customerlogin')
