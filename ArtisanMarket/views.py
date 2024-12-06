@@ -514,7 +514,33 @@ def initiate_payment(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+#payment with card
+def process_card_payment(request):
+    if request.method == "POST":
+        card_number = request.POST.get("card_number")
+        expiry_date = request.POST.get("expiry_date")
+        cvv = request.POST.get("cvv")
+        amount = request.POST.get("amount")
 
+        # Perform basic validation
+        if not all([card_number, expiry_date, cvv, amount]):
+            return JsonResponse({"error": "All fields are required"}, status=400)
+
+        # Mock payment processing (simulate success for now)
+        payment_status = "success"  # Change based on your payment gateway response
+        order_id = "ORDER1234"  # Example, generate this dynamically
+
+        if payment_status == "success":
+            # Save payment and order details in the database
+            # Example:
+            # Order.objects.create(order_id=order_id, amount=amount, status='Paid')
+
+            # Redirect to the tracking page
+            return redirect('my_order_view', order_id=order_id)
+        else:
+            return JsonResponse({"error": "Payment failed. Please try again."}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 @login_required(login_url='customerlogin')

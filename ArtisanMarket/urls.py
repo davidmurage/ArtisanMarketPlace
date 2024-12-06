@@ -53,6 +53,7 @@ urlpatterns = [
 
     path('payment-selection/', views.payment_selection, name='payment_selection'),
     path('initiate-payment/', views.initiate_payment, name='initiate_payment'),
+    path('process-card-payment/', views.process_card_payment, name='process_card_payment'),
 
     path('payment-success', views.payment_success_view,name='payment-success'),
 
