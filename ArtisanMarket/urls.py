@@ -52,6 +52,7 @@ urlpatterns = [
     path('customer-address', views.customer_address_view,name='customer-address'),
 
     path('payment-selection/', views.payment_selection, name='payment_selection'),
+    path('payment_callback/<int:order_id>/', views.payment_callback, name='payment_callback'),
     path('initiate-payment/', views.initiate_payment, name='initiate_payment'),
     path('process-card-payment/', views.process_card_payment, name='process_card_payment'),
 

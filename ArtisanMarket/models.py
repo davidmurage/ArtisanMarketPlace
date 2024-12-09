@@ -28,6 +28,7 @@ class Product(models.Model):
 class Orders(models.Model):
     STATUS = (
         ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
         ('Order Confirmed', 'Order Confirmed'),
         ('Out for Delivery', 'Out for Delivery'),
         ('Delivered', 'Delivered'),

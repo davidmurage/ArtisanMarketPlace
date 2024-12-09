@@ -14,6 +14,9 @@ from django.shortcuts import render
 from datetime import datetime
 import base64
 import os
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import Orders, Customer, Product
 
 
 def home_view(request):
@@ -484,6 +487,23 @@ def initiate_payment(request):
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")
         amount = request.POST.get("amount")
+        product_id = request.POST.get("art_id")
+
+        # Get product and customer details
+        product = Product.objects.get(id=product_id)
+        customer = Customer.objects.get(user=request.user)
+
+        # Create a pending order
+        order = Orders.objects.create(
+            customer=customer,
+            product=product,
+            email=customer.user.email,
+            address=customer.address,
+            mobile=phone_number,
+            status = 'Pending'
+        )
+
+
         access_token = get_mpesa_access_token()
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -502,17 +522,36 @@ def initiate_payment(request):
             "PartyA": phone_number,
             "PartyB": BUSINESS_SHORTCODE,
             "PhoneNumber": phone_number,
-            "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+            "CallBackURL": f"https://sandbox.safaricom.co.ke/mpesa/{order.id}/",
             "AccountReference": "ArtisanMarket",
-            "TransactionDesc": "Payment for booking"
+            "TransactionDesc": f"Payment for {product.name}"
         }
 
         url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
         response = requests.post(url, json=request, headers=headers)
 
-        return JsonResponse(response.json())
+        if response.status_code == 200:
+            return JsonResponse({'redirect_url': f'/my_order.html'})
+        else:
+            return JsonResponse({'errorMessage': "Failed to initiate Payment"})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+@csrf_exempt
+def payment_callback(request,order_id):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        result_code = body.get("Body", {}).get("stkCallback", {}).get("ResultCode", None)
+
+        order = Orders.objects.get(id=order_id)
+
+        if result_code == 0: #payment successful
+            order.status = 'Paid'
+            order.save()
+            return JsonResponse({'message': 'Payment Successful!'})
+        else: # Payment failed
+            order.status = 'Pending'
+            order.save()
+            return JsonResponse({'errorMessage': 'Payment failed'})
+
 
 #payment with card
 def process_card_payment(request):
