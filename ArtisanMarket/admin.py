@@ -13,7 +13,7 @@ class OrderAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Orders, OrderAdmin)
 
-class FeedbackAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Feedback, FeedbackAdmin)
+#class FeedbackAdmin(admin.ModelAdmin):
+   # pass
+#admin.site.register(Feedback, FeedbackAdmin)
 # Register your models here.
