@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, reverse
 from dotenv import load_dotenv
 
@@ -483,57 +484,69 @@ def get_mpesa_access_token():
     response = requests.get(url, auth=(CONSUMER_KEY, CONSUMER_SECRET))
     return response.json().get("access_token")
 
+
 def initiate_payment(request):
     if request.method == "POST":
+        # Validate cart
+        if 'product_ids' not in request.COOKIES or not request.COOKIES['product_ids']:
+            return JsonResponse({'errorMessage': "Cart is empty, please add products to proceed."}, status=400)
+
+        # Parse products and calculate total
+        product_ids = request.COOKIES['product_ids'].split('|')
+        products = Product.objects.filter(id__in=product_ids)
+        total_amount = sum(product.price for product in products)
+
         phone_number = request.POST.get("phone_number")
-        amount = request.POST.get("amount")
-        product_id = request.POST.get("art_id")
+        if not phone_number or not phone_number.isdigit() or len(phone_number) != 10:
+            return JsonResponse({'errorMessage': "Invalid phone number"}, status=400)
 
-        # Get product and customer details
-        product = Product.objects.get(id=product_id)
         customer = Customer.objects.get(user=request.user)
+        address = request.COOKIES.get('address', customer.address)
 
-        # Create a pending order
+        if not address:
+            return JsonResponse({'errorMessage': "Address is required"}, status=400)
+
+        # Create pending order
         order = Orders.objects.create(
             customer=customer,
-            product=product,
+            product=products,
             email=customer.user.email,
-            address=customer.address,
+            address=address,
             mobile=phone_number,
-            status = 'Pending'
+            status='Pending'
         )
 
-
+        # MPesa payment process
         access_token = get_mpesa_access_token()
+        if not access_token:
+            return JsonResponse({'errorMessage': "Unable to fetch access token"}, status=500)
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         password = base64.b64encode((BUSINESS_SHORTCODE + PASSKEY + timestamp).encode()).decode()
 
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
-
-        request = {
+        headers = {"Authorization": f"Bearer {access_token}"}
+        payment_request = {
             "BusinessShortCode": BUSINESS_SHORTCODE,
             "Password": password,
             "Timestamp": timestamp,
             "TransactionType": "CustomerPayBillOnline",
-            "Amount": amount,
+            "Amount": total_amount,
             "PartyA": phone_number,
             "PartyB": BUSINESS_SHORTCODE,
             "PhoneNumber": phone_number,
-            "CallBackURL": f"https://sandbox.safaricom.co.ke/mpesa/{order.id}/",
+            "CallBackURL": "https://yourdomain.com/mpesa/callback/",
             "AccountReference": "ArtisanMarket",
-            "TransactionDesc": f"Payment for {product.name}"
+            "TransactionDesc": f"Payment for order {order.id}"
         }
 
         url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-        response = requests.post(url, json=request, headers=headers)
+        response = requests.post(url, json=payment_request, headers=headers)
 
         if response.status_code == 200:
-            return JsonResponse({'redirect_url': f'/my_order.html'})
+            return JsonResponse({'redirect_url': reverse('order_confirmation')})
         else:
-            return JsonResponse({'errorMessage': "Failed to initiate Payment"})
+            return JsonResponse({'errorMessage': "Failed to initiate Payment"}, status=500)
+
 
 @csrf_exempt
 def payment_callback(request,order_id):
