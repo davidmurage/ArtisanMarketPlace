@@ -6,24 +6,85 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>ArtisanMarketPlace</title>
-  <style media="screen">
-    .footer{
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, sans-serif;
+    }
+
+    h3 {
+      text-align: center;
+      line-height: 1.6;
+      color: #333;
+      padding: 20px;
+    }
+
+    .contact-section {
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin: 20px auto;
+      width: 80%;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .contact-section h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .contact-details {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    .contact-details strong {
+      color: #333;
+    }
+
+    .footer {
       position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background-color: #333;
+      color: white;
     }
   </style>
 </head>
 
-<body style="background-color:#f7f7f7;">
-  {%if request.user.is_authenticated%}
+<body>
+  {% if request.user.is_authenticated %}
     {% include "ecom/customer_navbar.html" %}
-  {%else%}
+  {% else %}
     {% include "ecom/navbar.html" %}
-  {%endif%}
+  {% endif %}
   <br><br><br>
-<h3 style="text-align:center;">"Welcome to Artisan Marketplace, your premier destination for discovering and celebrating the art of craftsmanship. We are a vibrant platform connecting talented artisans with customers who value the beauty of handmade and unique creations. At Artisan Marketplace, we believe in the power of creativity and the stories behind every piece. Whether you're an artisan showcasing your skill or a buyer seeking one-of-a-kind products, we are committed to fostering connections that inspire and empower. Explore a diverse range of handcrafted items, support local talent, and join us in promoting sustainable and meaningful commerce. Together, we craft a world where artistry thrives and individuality shines." </h3>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+  <h3>
+    "Welcome to Artisan Marketplace, your premier destination for discovering and celebrating the art of craftsmanship.
+    We are a vibrant platform connecting talented artisans with customers who value the beauty of handmade and unique creations.
+    At Artisan Marketplace, we believe in the power of creativity and the stories behind every piece.
+    Whether you're an artisan showcasing your skill or a buyer seeking one-of-a-kind products, we are committed to fostering connections that inspire and empower.
+    Explore a diverse range of handcrafted items, support local talent, and join us in promoting sustainable and meaningful commerce.
+    Together, we craft a world where artistry thrives and individuality shines."
+  </h3>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <h2>Contact Us</h2>
+    <div class="contact-details">
+      <p><strong>Email:</strong> davidmurage415@gmail.com</p>
+      <p><strong>Phone:</strong> +254748495139</p>
+      <p><strong>Address:</strong> 123 Artisan Street, Creative City, Artland</p>
+    </div>
+  </div>
+
+  <br><br><br><br><br><br><br><br>
   {% include "ecom/footer.html" %}
 </body>
-
 
 </html>
